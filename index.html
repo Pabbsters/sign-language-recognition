@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASL Sign Recognition</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>ASL Sign Recognition</h1>
+      <p class="subtitle">Hold a sign in front of your webcam</p>
+    </header>
+
+    <main>
+      <div class="camera-container">
+        <video id="video" autoplay playsinline muted></video>
+        <canvas id="canvas"></canvas>
+
+        <div class="result-overlay" id="resultOverlay">
+          <span class="letter" id="letter">—</span>
+        </div>
+
+        <div class="no-hand" id="noHand">No hand detected</div>
+      </div>
+
+      <div class="sidebar">
+        <div class="prediction-panel">
+          <div class="confidence-label">
+            <span id="signName">—</span>
+            <span id="confidencePct">0%</span>
+          </div>
+          <div class="confidence-bar-track">
+            <div class="confidence-bar-fill" id="confidenceBar"></div>
+          </div>
+        </div>
+
+        <button class="toggle-btn" id="toggleBtn">Stop Camera</button>
+
+        <div class="sign-grid">
+          <h3>Supported Signs</h3>
+          <div class="signs">
+            <span>A</span><span>B</span><span>C</span><span>D</span>
+            <span>E</span><span>F</span><span>G</span><span>H</span>
+            <span>I</span><span>L</span><span>O</span><span>V</span>
+            <span>W</span><span>Y</span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+  <script src="classifier.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
