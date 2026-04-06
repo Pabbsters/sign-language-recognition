@@ -141,6 +141,79 @@ function classify(landmarks) {
     candidates.push({ sign: "Y", confidence: 0.9 });
   }
 
+  // K: index + middle up, thumb pointing up between them (thumb extended)
+  if (index && middle && !ring && !pinky && thumb) {
+    candidates.push({ sign: "K", confidence: 0.83 });
+  }
+
+  // M: all four fingers folded down over thumb (fist, thumb tucked, all 4 curled tightly over it)
+  if (allCurled && !thumb && curlDepth.slice(1).every(d => d > 0.05)) {
+    candidates.push({ sign: "M", confidence: 0.75 });
+  }
+
+  // N: index + middle + ring curled over thumb (3 fingers, tighter than M)
+  if (!index && !middle && !ring && !pinky && !thumb) {
+    candidates.push({ sign: "N", confidence: 0.72 });
+  }
+
+  // P: like K but hand tilted down — index + middle + thumb extended, others curled
+  // Detected same as K; disambiguate by wrist/index angle (index tip below wrist = P)
+  if (index && middle && !ring && !pinky && thumb) {
+    const wristY = landmarks[0].y;
+    const indexTipY = landmarks[8].y;
+    if (indexTipY > wristY + 0.05) {
+      candidates.push({ sign: "P", confidence: 0.8 });
+    }
+  }
+
+  // Q: like G but pointing down — index + thumb, index tip below wrist
+  if (index && thumb && !middle && !ring && !pinky) {
+    const wristY = landmarks[0].y;
+    const indexTipY = landmarks[8].y;
+    if (indexTipY > wristY) {
+      candidates.push({ sign: "Q", confidence: 0.78 });
+    }
+  }
+
+  // R: index + middle crossed — both extended, tips very close together
+  if (index && middle && !ring && !pinky && !thumb) {
+    const crossDist = fingertipDistance(8, 12, landmarks);
+    if (crossDist < 0.04) {
+      candidates.push({ sign: "R", confidence: 0.8 });
+    }
+  }
+
+  // S: fist with thumb wrapped over front of curled fingers (thumb extended over fist)
+  if (allCurled && thumb) {
+    candidates.push({ sign: "S", confidence: 0.78 });
+  }
+
+  // T: thumb inserted between index and middle — index curled, thumb tip near index middle joint
+  if (allCurled && thumb) {
+    const thumbToIndexMid = fingertipDistance(4, 6, landmarks);
+    if (thumbToIndexMid < 0.06) {
+      candidates.push({ sign: "T", confidence: 0.82 });
+    }
+  }
+
+  // U: index + middle extended together pointing up (close, like H but upward)
+  if (index && middle && !ring && !pinky && !thumb) {
+    const spread = Math.abs(landmarks[8].x - landmarks[12].x);
+    const wristY = landmarks[0].y;
+    const indexTipY = landmarks[8].y;
+    if (spread < 0.07 && indexTipY < wristY - 0.15) {
+      candidates.push({ sign: "U", confidence: 0.84 });
+    }
+  }
+
+  // X: index finger hooked/crooked — index only, tip curled back toward palm
+  if (!middle && !ring && !pinky && !thumb) {
+    const indexCurl = curlDepth[1];
+    if (indexCurl > 0.01 && indexCurl < 0.06) {
+      candidates.push({ sign: "X", confidence: 0.76 });
+    }
+  }
+
   if (candidates.length === 0) return { sign: null, confidence: 0 };
 
   // Take highest confidence; if tied, last one wins (more specific rules are appended later)
