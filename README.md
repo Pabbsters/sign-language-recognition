@@ -1,5 +1,7 @@
 # ASL Sign Recognition
 
+**Live demo:** https://sign-language-recognition-beta.vercel.app
+
 Real-time American Sign Language recognition in the browser. No backend, no installs — just open `index.html`.
 
 ## How it works
